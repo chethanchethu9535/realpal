@@ -13,7 +13,7 @@ import {
   signOutUserSuccess,
   signOutUserFailure,
 } from '../redux/user/userSlice.js';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate for redirection
+import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate for redirection
 
 export default function Profile() {
   const fileRef = useRef(null);
@@ -179,6 +179,9 @@ export default function Profile() {
         >
           {loading ? 'Loading...' : 'Update'}
         </button>
+        <Link className='bg-yellow-500 text-white p-3 rounded-lg uppercase text-center hover:opacity-65' to ={"/createlisting"}>
+        Create Listing
+        </Link>
       </form>
       <div className="flex justify-between mt-5">
         <span onClick={handleDeleteUser} className="text-green-700 cursor-pointer">Delete Account</span>
