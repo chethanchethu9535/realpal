@@ -2,6 +2,7 @@ import User from '../models/user.model.js';
 import bcryptjs from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { errorHandler } from '../utils/error.js';
+import Listing from '../models/listing.model.js';
 
 
 
@@ -81,4 +82,18 @@ export const signin = async (req, res, next) => {
       next(error)
     }
 
+  }
+
+  export const getListing = async (req, res, next) => {
+    try {
+      const listing = await Listing.findById(req.params.id);
+      if (!listing) {
+        return next(errorHandler(404, 'listing not found!'));
+
+      }
+      res.status(200).json(listing);
+    } catch (error) {
+      next(error);
+      
+    }
   };

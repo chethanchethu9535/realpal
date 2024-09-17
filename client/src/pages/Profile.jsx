@@ -10,8 +10,7 @@ import {
   deleteUserStart,
   deleteUserSuccess,
   signOutUserStart,
-  signOutUserSuccess,
-  signOutUserFailure,
+ 
 } from '../redux/user/userSlice.js';
 import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate for redirection
 
@@ -139,7 +138,7 @@ export default function Profile() {
       
     }
 
-  };
+  }
   const handleListingDelete = async (listingId) => {
     try {
       const res = await fetch(`/api/listing/delete/${listingId}`, {
@@ -157,6 +156,7 @@ export default function Profile() {
       
     }
   };
+
 
 
   return (
@@ -241,7 +241,9 @@ export default function Profile() {
         </Link>
         <div className=' flex flex-col items-center'>
           <button onClick={()=>handleListingDelete(listing._id)} className='text-blue-900 uppercase'>Delete</button>
+          <Link to={`/updatelisting/${listing._id}`}>
           <button className='text-yellow-500 uppercase'>Edit</button>
+          </Link>
 
         </div>
         
@@ -253,3 +255,4 @@ export default function Profile() {
     </div>
   );
 }
+

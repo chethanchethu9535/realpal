@@ -1,14 +1,15 @@
-import {  useState } from "react";
+import {  useEffect, useState } from "react";
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage';
 import { app } from '../firebase';
 import {useSelector} from 'react-redux';
-import {useNavigate} from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 
 
 
 export default function CreateListing() {
     const {currentUser} =useSelector(state => state.user);
     const navigate= useNavigate();
+    const params = useParams();
     const [files, setFiles] = useState([]);
     const [formData, setFormdata] = useState({
         imageUrls: [],
@@ -28,6 +29,23 @@ export default function CreateListing() {
     const [uploading, setUploading] = useState(false);
     const [error, setError] = useState(false);
     const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+      const fetchListing = async () => {
+        const listingId = params.listingId;
+        const res = await fetch(`/api/listing/get/${listingId}`);
+        const data = await res.json();
+        setFormdata(data);4
+        if(data.success === false) {
+          console.log(data.message);
+          return;
+          
+        }
+
+      }
+      fetchListing();
+
+    }, []);
     
     const handleImageSubmit = (e) => {
         if (files.length > 0 && files.length + formData.imageUrls.length < 7 ) {
@@ -117,7 +135,7 @@ export default function CreateListing() {
 
             setLoading(true);
             setError(false);
-            const res = await fetch('/api/listing/create',{
+            const res = await fetch(`/api/listing/update/${params.listingId}`,{
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -142,7 +160,7 @@ export default function CreateListing() {
     
   return (
     <main className='p-3 max-w-4xl mx-auto'>
-        <h1 className='text-3xl font-semibold text-center my-7'>Create a Listing</h1>
+        <h1 className='text-3xl font-semibold text-center my-7'>Update a Listing</h1>
         <form onSubmit={handleSubmit} className='flex flex-col gap-8'>
             <div className='flex flex-col gap-3 flex-1 '>
                 <input type="text" placeholder='Name' className='border p-3 rounded-lg' id='name' maxLength='62' minLength='10' required onChange={handleChange} value={formData.name}/>
@@ -205,7 +223,7 @@ export default function CreateListing() {
                         </div>
                     ))
                 }
-            <button disabled={loading || uploading } className='p-3 bg-violet-600 text-white rounded-lg uppercase hover:opacity-80 disabled:opacity-80'>{loading ? 'creating....' : 'create listing'}</button>
+            <button disabled={loading || uploading } className='p-3 bg-violet-600 text-white rounded-lg uppercase hover:opacity-80 disabled:opacity-80'>{loading ? 'updating....' : 'update listing'}</button>
             {error && <p className="text-white text-sm">{error}</p>}
             </div>
             
