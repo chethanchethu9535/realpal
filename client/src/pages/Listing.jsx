@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import SwiperCore  from 'swiper';
+import {useSelector} from 'react-redux';
 import {Navigation} from 'swiper/modules';
 import 'swiper/css/bundle';
 import {
@@ -13,6 +14,7 @@ import {
   FaParking,
   FaShare,
 } from 'react-icons/fa';
+import Contact from '../components/Contact';
 
 // https://sabe.io/blog/javascript-format-numbers-commas#:~:text=The%20best%20way%20to%20format,format%20the%20number%20with%20commas.
 
@@ -23,7 +25,9 @@ export default function Listing() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [contact, setContact] = useState(false);
   const params = useParams();
+  const {currentUser} = useSelector((state) => state.user);
   useEffect(() => {
     const fetchListing = async () => {
       try {
@@ -49,7 +53,7 @@ export default function Listing() {
     }
     fetchListing()
   }, [params.listingId]);
-  console.log(loading);
+ 
   
 
   return <main>
@@ -59,14 +63,14 @@ export default function Listing() {
       <div>
         <Swiper navigation>
           {listing.imageUrls.map((url) => ( <SwiperSlide key={url}>
-            <div className='h-[550px]' style={{background: `url(${url}) center no-repeat `, backgroundSize: 'cover'}}></div>
+            <div className='h-[500px]' style={{background: `url(${url}) center no-repeat `, backgroundSize: 'cover'}}></div>
 
             </SwiperSlide>
           ))}
         </Swiper>
         <div className='fixed top-[13%] right-[3%] z-10 border rounded-full w-12 h-12 flex justify-center items-center bg-slate-100 cursor-pointer'>
             <FaShare
-              className='text-slate-500'
+              className='text-white'
               onClick={() => {
                 navigator.clipboard.writeText(window.location.href);
                 setCopied(true);
@@ -77,19 +81,19 @@ export default function Listing() {
             />
           </div>
           {copied && (
-            <p className='fixed top-[23%] right-[5%] z-10 rounded-md bg-slate-100 p-2'>
+            <p className='fixed top-[23%] right-[5%] z-10 rounded-md bg-slate-300 p-2'>
               Link copied!
             </p>
           )}
           <div className='flex flex-col max-w-4xl mx-auto p-3 my-7 gap-4'>
-            <p className='text-2xl font-semibold'>
+            <p className='text-4xl font-semibold'>
               {listing.name} - ${' '}
               {listing.offer
                 ? listing.discountPrice.toLocaleString('en-US')
                 : listing.regularPrice.toLocaleString('en-US')}
               {listing.type === 'rent' && ' / month'}
             </p>
-            <p className='flex items-center mt-6 gap-2 text-blue-900  text-sm'>
+            <p className='flex items-center mt-6 gap-2 text-blue-900  text-2xl'>
               <FaMapMarkerAlt className='text-green-600' />
               {listing.address}
             </p>
@@ -129,6 +133,9 @@ export default function Listing() {
                 {listing.furnished ? 'Furnished' : 'Unfurnished'}
               </li>
             </ul>
+            {currentUser && listing.userRef !== currentUser._id && !contact && (
+            <button  onClick={()=>setContact(true)} className='bg-slate-950 text-white rounded-lg uppercase hover:opacity-75 p-3' >contact landlord</button>)}
+            {contact && <Contact listing={listing}/>}
           </div>
       
       </div>
